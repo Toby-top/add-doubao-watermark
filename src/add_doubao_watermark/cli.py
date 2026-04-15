@@ -43,12 +43,12 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="输出目录（默认: 在输入旁边创建 out/；单文件则输出为 <name>.watermarked<ext>）",
     )
-    parser.add_argument("--text", type=str, default="豆包AI生成", help="水印文本")
+    parser.add_argument("--text", type=str, default="", help="自定义叠加文字（留空则不叠加）")
     parser.add_argument(
         "--watermark-png",
         type=str,
         default=None,
-        help="水印PNG路径（若不传，会尝试使用内置 assets/doubao_watermark.png；找不到则回退为文字水印）",
+        help="水印PNG路径（不传则使用内置 assets/doubao_watermark.png 或 doubao-watermark.png）",
     )
     parser.add_argument(
         "--position",
@@ -120,8 +120,9 @@ def main(argv: list[str] | None = None) -> int:
         if not png_path.exists():
             parser.error(f"水印PNG不存在: {png_path}")
 
+    text_value = (args.text or "").strip()
     text_style = WatermarkStyle(
-        text=args.text,
+        text=text_value,
         position=args.position,
         opacity=args.opacity,
         fill=args.fill,
@@ -145,10 +146,18 @@ def main(argv: list[str] | None = None) -> int:
                 watermarked = add_png_watermark(img, png_path, png_style)
             else:
                 built_in = load_default_watermark_png()
-                if built_in is not None:
-                    watermarked = add_png_watermark_image(img, built_in, png_style)
+                if built_in is None:
+                    if text_value:
+                        watermarked = add_text_watermark(img, text_style)
+                    else:
+                        parser.error(
+                            "未找到内置水印PNG（assets/doubao_watermark.png 或 doubao-watermark.png），并且未提供 --watermark-png"
+                        )
                 else:
-                    watermarked = add_text_watermark(img, text_style)
+                    watermarked = add_png_watermark_image(img, built_in, png_style)
+
+            if text_value:
+                watermarked = add_text_watermark(watermarked, text_style)
             save_image_like_input(watermarked, src, out_path)
         print(f"{src} -> {out_path}")
 

@@ -17,10 +17,10 @@ build = ["pyinstaller>=6.3.0"]
 
 [project.scripts]
 doubao-watermark = "add_doubao_watermark.cli:main"
+doubao-watermark-gui = "add_doubao_watermark.gui:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
-

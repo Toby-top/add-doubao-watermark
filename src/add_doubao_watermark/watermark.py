@@ -113,11 +113,17 @@ def add_text_watermark(img: Image.Image, style: WatermarkStyle) -> Image.Image:
 
 def load_default_watermark_png() -> Image.Image | None:
     try:
-        ref = importlib_resources.files("add_doubao_watermark").joinpath(
-            "assets/doubao_watermark.png"
-        )
-        with ref.open("rb") as f:
-            return Image.open(f).convert("RGBA").copy()
+        assets = importlib_resources.files("add_doubao_watermark").joinpath("assets")
+        for name in ("doubao_watermark.png", "doubao-watermark.png"):
+            ref = assets.joinpath(name)
+            try:
+                with ref.open("rb") as f:
+                    img = Image.open(f)
+                    img.load()
+                    return img.convert("RGBA").copy()
+            except FileNotFoundError:
+                continue
+        return None
     except Exception:
         return None
 

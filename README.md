@@ -14,9 +14,10 @@
 
 把你提取到的水印 PNG 放到这个路径，并命名为 `doubao_watermark.png`：
 
-- `/Users/Toby_top/Documents/Github-repo/add-doubao-watermark/src/add_doubao_watermark/assets/doubao_watermark.png`
+- `src/add_doubao_watermark/assets/doubao_watermark.png`（推荐）
+- 或 `src/add_doubao_watermark/assets/doubao-watermark.png`（兼容）
 
-之后不传 `--watermark-png` 时，会自动尝试使用该内置水印；如果找不到则回退为“文字水印”。
+之后不传 `--watermark-png` 时，会自动使用该内置水印。
 
 ## 本地开发（不安装也能跑）
 
@@ -30,7 +31,16 @@ PYTHONPATH=src python3 -m add_doubao_watermark.cli <input>
 PYTHONPATH=src python3 -m add_doubao_watermark.cli ./images
 PYTHONPATH=src python3 -m add_doubao_watermark.cli ./a.jpg --position bottom-right --opacity 160
 PYTHONPATH=src python3 -m add_doubao_watermark.cli ./a.jpg --watermark-png /path/to/watermark.png
+PYTHONPATH=src python3 -m add_doubao_watermark.cli ./a.jpg --text "自定义文字"
 ```
+
+## GUI（简单版）
+
+```bash
+PYTHONPATH=src python3 -m add_doubao_watermark.gui
+```
+
+GUI 默认使用内置水印 PNG，可勾选“叠加自定义文字”。
 
 ## 安装（可选）
 
@@ -44,7 +54,7 @@ doubao-watermark ./images
 ## 使用说明
 
 ```bash
-doubao-watermark <input> [--output <path>] [--text <text>] [--position <pos>] [--opacity 0-255]
+doubao-watermark <input> [--output <path>] [--watermark-png <png>] [--text <text>] [--position <pos>] [--opacity 0-255]
 ```
 
 - `<input>`：图片文件或目录（目录会递归处理）
@@ -52,6 +62,7 @@ doubao-watermark <input> [--output <path>] [--text <text>] [--position <pos>] [-
   - 输入是单文件：可传输出文件路径，或输出目录（自动生成 `<name>.watermarked<ext>`）
   - 输入是目录：默认输出到 `<input>/out/`，并保持目录结构
 - `--font`：指定字体文件路径（中文需要可用中文字体）。默认会尝试系统字体（如 `PingFang`）。
+- `--text`：自定义叠加文字（留空则不叠加）
 
 ## 打包（macOS）
 
@@ -64,6 +75,7 @@ doubao-watermark <input> [--output <path>] [--text <text>] [--position <pos>] [-
 生成：
 
 - `dist/doubao-watermark`
+- `dist/doubao-watermark-gui.app`
 - `dist/doubao-watermark-<version>-macos-<arch>.zip`
 
 ## GitHub Release（推荐流程）
