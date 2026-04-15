@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.resources as importlib_resources
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
@@ -28,6 +29,13 @@ class WatermarkStyle:
     margin_ratio: float = 0.02  # margin relative to min(image_w, image_h)
     font_path: str | None = None
     font_size_ratio: float = 0.05  # font size relative to min(image_w, image_h)
+
+@dataclass(frozen=True)
+class PngWatermarkStyle:
+    position: Position = "bottom-right"
+    opacity: int = 255  # 0-255
+    margin_ratio: float = 0.02
+    width_ratio: float = 0.22  # watermark width relative to min(image_w, image_h)
 
 
 def _clamp_int(value: int, lo: int, hi: int) -> int:
@@ -103,6 +111,63 @@ def add_text_watermark(img: Image.Image, style: WatermarkStyle) -> Image.Image:
     return Image.alpha_composite(base, overlay)
 
 
+def load_default_watermark_png() -> Image.Image | None:
+    try:
+        ref = importlib_resources.files("add_doubao_watermark").joinpath(
+            "assets/doubao_watermark.png"
+        )
+        with ref.open("rb") as f:
+            return Image.open(f).convert("RGBA").copy()
+    except Exception:
+        return None
+
+
+def _load_watermark_png_from_path(path: Path) -> Image.Image:
+    return Image.open(path).convert("RGBA")
+
+
+def add_png_watermark_image(
+    img: Image.Image,
+    watermark: Image.Image,
+    style: PngWatermarkStyle = PngWatermarkStyle(),
+) -> Image.Image:
+    if img.mode not in ("RGBA", "RGB"):
+        img = img.convert("RGBA")
+    base = img.convert("RGBA")
+
+    min_dim = max(1, min(base.size))
+    margin = max(4, int(min_dim * style.margin_ratio))
+    opacity = _clamp_int(style.opacity, 0, 255)
+
+    wm = watermark.convert("RGBA")
+    target_w = max(16, int(min_dim * style.width_ratio))
+    if wm.size[0] != target_w:
+        target_h = max(1, int(wm.size[1] * (target_w / max(1, wm.size[0]))))
+        wm = wm.resize((target_w, target_h), resample=Image.Resampling.LANCZOS)
+
+    if opacity < 255:
+        r, g, b, a = wm.split()
+        a = a.point(lambda v: (v * opacity) // 255)
+        wm = Image.merge("RGBA", (r, g, b, a))
+
+    x, y = _compute_anchor_xy(
+        base.size[0], base.size[1], wm.size[0], wm.size[1], margin, style.position
+    )
+
+    overlay = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    overlay.paste(wm, (x, y), wm)
+    return Image.alpha_composite(base, overlay)
+
+
+def add_png_watermark(
+    img: Image.Image,
+    watermark_png: Path,
+    style: PngWatermarkStyle = PngWatermarkStyle(),
+) -> Image.Image:
+    wm = _load_watermark_png_from_path(watermark_png)
+    return add_png_watermark_image(img, wm, style)
+
+
 def save_image_like_input(
     watermarked: Image.Image, input_path: Path, output_path: Path
 ) -> None:
@@ -120,4 +185,3 @@ def save_image_like_input(
         return
     # Fallback: let Pillow pick based on extension
     watermarked.save(output_path)
-

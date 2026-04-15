@@ -7,7 +7,16 @@
 - 支持单张图片或目录批量处理（递归）
 - 支持 `jpg/jpeg/png/webp/bmp/tif/tiff`
 - 可配置位置、透明度、颜色、描边、字体大小/边距比例
+- 支持使用“真实豆包水印 PNG”叠加（推荐）
 - 支持 PyInstaller 打包成可分发的 macOS 可执行文件（CLI）
+
+## 放置真实豆包水印 PNG
+
+把你提取到的水印 PNG 放到这个路径，并命名为 `doubao_watermark.png`：
+
+- `/Users/Toby_top/Documents/Github-repo/add-doubao-watermark/src/add_doubao_watermark/assets/doubao_watermark.png`
+
+之后不传 `--watermark-png` 时，会自动尝试使用该内置水印；如果找不到则回退为“文字水印”。
 
 ## 本地开发（不安装也能跑）
 
@@ -20,6 +29,7 @@ PYTHONPATH=src python3 -m add_doubao_watermark.cli <input>
 ```bash
 PYTHONPATH=src python3 -m add_doubao_watermark.cli ./images
 PYTHONPATH=src python3 -m add_doubao_watermark.cli ./a.jpg --position bottom-right --opacity 160
+PYTHONPATH=src python3 -m add_doubao_watermark.cli ./a.jpg --watermark-png /path/to/watermark.png
 ```
 
 ## 安装（可选）
@@ -64,4 +74,3 @@ doubao-watermark <input> [--output <path>] [--text <text>] [--position <pos>] [-
 git tag v0.1.0
 git push origin v0.1.0
 ```
-

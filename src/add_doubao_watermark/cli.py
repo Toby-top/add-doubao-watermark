@@ -5,7 +5,15 @@ from pathlib import Path
 
 from PIL import Image
 
-from .watermark import WatermarkStyle, add_text_watermark, save_image_like_input
+from .watermark import (
+    PngWatermarkStyle,
+    WatermarkStyle,
+    add_png_watermark,
+    add_png_watermark_image,
+    add_text_watermark,
+    load_default_watermark_png,
+    save_image_like_input,
+)
 
 
 SUPPORTED_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff"}
@@ -37,6 +45,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--text", type=str, default="豆包AI生成", help="水印文本")
     parser.add_argument(
+        "--watermark-png",
+        type=str,
+        default=None,
+        help="水印PNG路径（若不传，会尝试使用内置 assets/doubao_watermark.png；找不到则回退为文字水印）",
+    )
+    parser.add_argument(
         "--position",
         type=str,
         default="bottom-right",
@@ -64,6 +78,12 @@ def build_parser() -> argparse.ArgumentParser:
         type=float,
         default=0.02,
         help="边距比例（相对图片短边，默认 0.02）",
+    )
+    parser.add_argument(
+        "--png-width-ratio",
+        type=float,
+        default=0.22,
+        help="PNG 水印宽度比例（相对图片短边，默认 0.22）",
     )
     return parser
 
@@ -94,7 +114,13 @@ def main(argv: list[str] | None = None) -> int:
     if not images:
         parser.error("未找到可处理的图片（支持: jpg/jpeg/png/webp/bmp/tif/tiff）")
 
-    style = WatermarkStyle(
+    png_path: Path | None = None
+    if args.watermark_png:
+        png_path = Path(args.watermark_png).expanduser()
+        if not png_path.exists():
+            parser.error(f"水印PNG不存在: {png_path}")
+
+    text_style = WatermarkStyle(
         text=args.text,
         position=args.position,
         opacity=args.opacity,
@@ -105,11 +131,24 @@ def main(argv: list[str] | None = None) -> int:
         font_size_ratio=float(args.font_size_ratio),
         margin_ratio=float(args.margin_ratio),
     )
+    png_style = PngWatermarkStyle(
+        position=args.position,
+        opacity=args.opacity,
+        margin_ratio=float(args.margin_ratio),
+        width_ratio=float(args.png_width_ratio),
+    )
 
     for src in images:
         out_path = _compute_output_path(input_path, src, args.output)
         with Image.open(src) as img:
-            watermarked = add_text_watermark(img, style)
+            if png_path is not None:
+                watermarked = add_png_watermark(img, png_path, png_style)
+            else:
+                built_in = load_default_watermark_png()
+                if built_in is not None:
+                    watermarked = add_png_watermark_image(img, built_in, png_style)
+                else:
+                    watermarked = add_text_watermark(img, text_style)
             save_image_like_input(watermarked, src, out_path)
         print(f"{src} -> {out_path}")
 
@@ -118,4 +157,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
