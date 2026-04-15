@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from logging import root
 import threading
 from dataclasses import dataclass
 from pathlib import Path
@@ -7,6 +8,7 @@ from tkinter import BooleanVar, DoubleVar, IntVar, StringVar, Tk, ttk, filedialo
 
 from PIL import Image
 
+from .win_dpi import enable_windows_dpi_awareness
 from .watermark import (
     PngWatermarkStyle,
     WatermarkStyle,
@@ -19,6 +21,7 @@ from .watermark import (
 
 SUPPORTED_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff"}
 
+root.title("豆印")
 
 def _iter_images(inputs: list[Path]) -> list[Path]:
     paths: list[Path] = []
@@ -260,6 +263,7 @@ class App:
 
 
 def main() -> int:
+    enable_windows_dpi_awareness()
     root = Tk()
     try:
         ttk.Style().theme_use("aqua")
