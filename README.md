@@ -17,7 +17,7 @@
 
 ## 下载安装（推荐：直接用打包好的程序）
 
-1. 打开本仓库的 **Releases** 页面，下载与你系统匹配的压缩包（例如 `doubao-watermark-*-macos-*.zip` / `doubao-watermark-*-windows-*.zip`）。
+1. 打开本仓库的 [Release](https://github.com/Toby-top/add-doubao-watermark/releases "") 页面，下载与你系统匹配的可执行文件(macOS ARM64/Windows x86_64)
 2. 解压后你会看到两个程序：
    - `doubao-watermark` / `doubao-watermark.exe`：命令行工具
    - `doubao-watermark-gui.app` / `doubao-watermark-gui.exe`：图形界面工具
