@@ -3,7 +3,7 @@ name: Release (Windows)
 on:
   push:
     tags:
-      - "v*"
+      - "v1.0.*"
   workflow_dispatch: {}
 
 permissions:
