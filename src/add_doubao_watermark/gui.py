@@ -70,7 +70,7 @@ class App:
         self.output_dir: Path | None = None
 
         self.position = StringVar(value="bottom-right")
-        self.opacity = IntVar(value=200)
+        self.opacity = IntVar(value=int(255 * 0.95))
         self.png_width_ratio = DoubleVar(value=0.22)
         self.margin_ratio = DoubleVar(value=0.02)
         self.add_text = BooleanVar(value=False)

@@ -3,7 +3,7 @@ name: Release (macOS ARM64)
 on:
   push:
     tags:
-      - "v1.0.*"
+      - "v1*"
   workflow_dispatch: {}
 
 permissions:
