@@ -1,88 +1,153 @@
-# add-doubao-watermark
+# Doubao Watermark（给图片添加“豆包AI生成”水印）
 
-一个在 macOS 上开发/打包的图片水印工具：给图片批量添加“豆包AI生成”文字水印（默认右下角）。
+一个离线小工具：给图片批量添加“豆包AI生成”水印。支持 **GUI（点点点）** 和 **命令行（CLI）**，适合把一批图快速处理成带水印的版本。
 
-## 功能
+支持格式：`jpg/jpeg/png/webp/bmp/tif/tiff`  
+默认输出：  
+- 处理单张图片：生成 `*.watermarked.*`  
+- 处理目录：在输入目录旁生成 `out/`，并保持目录结构
 
-- 支持单张图片或目录批量处理（递归）
-- 支持 `jpg/jpeg/png/webp/bmp/tif/tiff`
-- 可配置位置、透明度、颜色、描边、字体大小/边距比例
-- 支持使用“真实豆包水印 PNG”叠加（推荐）
-- 支持 PyInstaller 打包成可分发的 macOS 可执行文件（CLI）
+示例（仓库自带样例图）：
 
-## 放置真实豆包水印 PNG
+| 原图 | 处理后 |
+| --- | --- |
+| ![sample](sample.jpg) | ![sample watermarked](sample.watermarked.jpg) |
 
-把你提取到的水印 PNG 放到这个路径，并命名为 `doubao_watermark.png`：
+---
 
-- `src/add_doubao_watermark/assets/doubao_watermark.png`（推荐）
-- 或 `src/add_doubao_watermark/assets/doubao-watermark.png`（兼容）
+## 下载安装（推荐：直接用打包好的程序）
 
-之后不传 `--watermark-png` 时，会自动使用该内置水印。
+1. 打开本仓库的 **Releases** 页面，下载与你系统匹配的压缩包（例如 `doubao-watermark-*-macos-*.zip` / `doubao-watermark-*-windows-*.zip`）。
+2. 解压后你会看到两个程序：
+   - `doubao-watermark` / `doubao-watermark.exe`：命令行工具
+   - `doubao-watermark-gui.app` / `doubao-watermark-gui.exe`：图形界面工具
 
-## 本地开发（不安装也能跑）
+### macOS 打不开怎么办？
 
-```bash
-PYTHONPATH=src python3 -m add_doubao_watermark.cli <input>
-```
+如果提示“来自未识别开发者/无法打开”，按 macOS 版本通常有两种方式：
 
-例如：
-
-```bash
-PYTHONPATH=src python3 -m add_doubao_watermark.cli ./images
-PYTHONPATH=src python3 -m add_doubao_watermark.cli ./a.jpg --position bottom-right --opacity 160
-PYTHONPATH=src python3 -m add_doubao_watermark.cli ./a.jpg --watermark-png /path/to/watermark.png
-PYTHONPATH=src python3 -m add_doubao_watermark.cli ./a.jpg --text "自定义文字"
-```
-
-## GUI（简单版）
+- **系统设置 → 隐私与安全性**：在提示处允许打开
+- 或在终端执行（对解压目录按需替换路径）：
 
 ```bash
-PYTHONPATH=src python3 -m add_doubao_watermark.gui
+xattr -dr com.apple.quarantine ./doubao-watermark-gui.app
 ```
 
-GUI 默认使用内置水印 PNG，可勾选“叠加自定义文字”。
+---
 
-## 安装（可选）
+## 使用方法（GUI）
 
-如果你希望使用命令 `doubao-watermark`：
+1. 打开 `doubao-watermark-gui`（macOS 为 `doubao-watermark-gui.app`）。
+2. 点击「选择图片…」或「选择目录…」。
+3. （可选）点击「选择输出目录…」；不选则：
+   - 单张图片输出为 `*.watermarked.*`
+   - 目录输出到输入目录旁的 `out/`
+4. 调整参数（可选）：
+   - 位置：`bottom-right / bottom-left / top-right / top-left / center`
+   - 不透明度：0–255
+   - PNG 宽度比例、边距比例
+   - 勾选「叠加自定义文字」并输入文字（不勾选则不叠加文字）
+5. 点击「开始处理」。
+
+---
+
+## 使用方法（CLI）
+
+解压后，进入解压目录：
+
+- macOS：在终端执行
 
 ```bash
-python3 -m pip install -e . --no-build-isolation
-doubao-watermark ./images
+./doubao-watermark <input>
 ```
 
-## 使用说明
+ - Windows：在 PowerShell 执行
+
+```powershell
+.\doubao-watermark.exe <input>
+```
+
+常用示例：
 
 ```bash
-doubao-watermark <input> [--output <path>] [--watermark-png <png>] [--text <text>] [--position <pos>] [--opacity 0-255]
+# 处理一个目录（递归），输出到 <input>/out/
+./doubao-watermark ./images
+
+# 处理一张图片（输出为 *.watermarked.*）
+./doubao-watermark ./a.jpg
+
+# 指定输出目录
+./doubao-watermark ./images -o ./out
+
+# 调整位置/不透明度
+./doubao-watermark ./a.jpg --position top-left --opacity 180
+
+# 叠加一行自定义文字
+./doubao-watermark ./a.jpg --text "自定义文字"
 ```
 
-- `<input>`：图片文件或目录（目录会递归处理）
-- `--output/-o`：
-  - 输入是单文件：可传输出文件路径，或输出目录（自动生成 `<name>.watermarked<ext>`）
-  - 输入是目录：默认输出到 `<input>/out/`，并保持目录结构
-- `--font`：指定字体文件路径（中文需要可用中文字体）。默认会尝试系统字体（如 `PingFang`）。
-- `--text`：自定义叠加文字（留空则不叠加）
-
-## 打包（macOS）
-
-产物是一个单文件 CLI 可执行程序（放在 `dist/`）：
+查看完整参数：
 
 ```bash
-./scripts/build_macos.sh
+./doubao-watermark --help
 ```
 
-生成：
+---
 
-- `dist/doubao-watermark`
-- `dist/doubao-watermark-gui.app`
-- `dist/doubao-watermark-<version>-macos-<arch>.zip`
+## 自定义/替换水印 PNG（可选）
 
-## GitHub Release（推荐流程）
+默认会使用程序内置的水印 PNG；如果你想替换成自己提取的“真实豆包水印 PNG”，有两种方式：
 
-仓库包含一个 workflow：当你 push tag（例如 `v0.1.0`）时，会在 GitHub Actions 上构建 macOS 包并上传到 Release。
+1. **CLI 指定外部 PNG**（推荐）：
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+./doubao-watermark ./a.jpg --watermark-png /path/to/your/watermark.png
 ```
+
+2. **从源码运行/自行打包时替换内置 PNG**：把 PNG 放到  
+`src/add_doubao_watermark/assets/`，命名为 `doubao_watermark.png`（或 `doubao-watermark.png`）。
+
+---
+
+## 从源码运行（可选，适合开发者）
+
+环境：Python 3.9+。
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -U pip
+pip install -e .
+```
+
+运行 CLI：
+
+```bash
+doubao-watermark <input>
+```
+
+运行 GUI：
+
+```bash
+doubao-watermark-gui
+```
+
+---
+
+## 常见问题
+
+### 1) 为什么输出目录里也会有子目录？
+当输入是一个目录时，会递归处理，并在输出目录中 **保持原始目录结构**，方便对照与回滚。
+
+### 2) 我只想处理某几张图？
+用 GUI 的「选择图片…」；或 CLI 直接传单个文件路径（也可以多次执行）。
+
+---
+
+## 免责声明
+
+本项目为非官方工具，仅供学习与个人使用。请确保你对待处理图片与水印使用方式拥有合法权利，并遵守相关平台/服务条款。
+
+## License
+
+MIT License（见 `LICENSE`）。

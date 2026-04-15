@@ -1,0 +1,48 @@
+name: Release (Windows)
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pillow pyinstaller
+
+      - name: Build (CLI + GUI)
+        shell: pwsh
+        run: |
+          $env:PYTHONPATH = "src"
+          Remove-Item -Recurse -Force build, dist -ErrorAction SilentlyContinue
+          $DataArg = "src\add_doubao_watermark\assets;add_doubao_watermark\assets"
+          pyinstaller -F pyinstaller_entry.py -n doubao-watermark --clean --paths src --add-data $DataArg
+          pyinstaller -F -w pyinstaller_gui_entry.py -n doubao-watermark-gui --clean --paths src --add-data $DataArg
+          $Version = python -c "import sys; sys.path.insert(0,'src'); import add_doubao_watermark as p; print(p.__version__)"
+          $Arch = "${{ runner.arch }}"
+          $Zip = "dist/doubao-watermark-$Version-windows-$Arch.zip"
+          if (Test-Path $Zip) { Remove-Item $Zip -Force }
+          Compress-Archive -Path "dist/doubao-watermark.exe","dist/doubao-watermark-gui.exe" -DestinationPath $Zip
+          Write-Host "Built: $Zip"
+
+      - name: GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+
