@@ -198,6 +198,11 @@
                                                                 b'\x89\x18\x1d\xb2'
                                                                 b'\xcd\x98\xe2M'
                                                                 b't+M\xdb'),
+ 'python3.13/lib-dynload/_ctypes.cpython-313-darwin.so': bytearray(b':\x13\x85\xa6'
+                                                                   b'\x0e\xf6!K'
+                                                                   b'\xdc\x83~\xf1'
+                                                                   b'TW\x16\xc2'
+                                                                   b'\x11\xf6\xffH'),
  'python3.13/lib-dynload/_datetime.cpython-313-darwin.so': bytearray(b':JMr'
                                                                      b'L\x96*\xe1'
                                                                      b'\xcb@\xb1\xab'
@@ -423,6 +428,11 @@
                                                                       b'\x89\x18\x1d\xb2'
                                                                       b'\xcd\x98\xe2M'
                                                                       b't+M\xdb'),
+ 'python3__dot__13/lib-dynload/_ctypes.cpython-313-darwin.so': bytearray(b':\x13\x85\xa6'
+                                                                         b'\x0e\xf6!K'
+                                                                         b'\xdc\x83~\xf1'
+                                                                         b'TW\x16\xc2'
+                                                                         b'\x11\xf6\xffH'),
  'python3__dot__13/lib-dynload/_datetime.cpython-313-darwin.so': bytearray(b':JMr'
                                                                            b'L\x96*\xe1'
                                                                            b'\xcb@\xb1\xab'

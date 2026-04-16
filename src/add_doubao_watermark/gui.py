@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from logging import root
 import threading
 from dataclasses import dataclass
 from pathlib import Path
@@ -21,7 +20,6 @@ from .watermark import (
 
 SUPPORTED_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff"}
 
-root.title("豆印")
 
 def _iter_images(inputs: list[Path]) -> list[Path]:
     paths: list[Path] = []
@@ -66,7 +64,7 @@ class GuiJob:
 class App:
     def __init__(self, root: Tk) -> None:
         self.root = root
-        root.title("Doubao Watermark")
+        root.title("豆印")
         root.geometry("640x360")
 
         self.input_paths: list[Path] = []
@@ -214,6 +212,7 @@ class App:
             text=self.text.get().strip(),
         )
 
+        self.root.title("豆印 - 处理中…")
         self.progress.set(0)
         self.status.set("处理中…")
 
@@ -264,6 +263,7 @@ class App:
 
 def main() -> int:
     enable_windows_dpi_awareness()
+    root.title("豆印 - 为图片加上豆包水印")
     root = Tk()
     try:
         ttk.Style().theme_use("aqua")
