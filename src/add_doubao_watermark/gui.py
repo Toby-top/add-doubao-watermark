@@ -263,8 +263,8 @@ class App:
 
 def main() -> int:
     enable_windows_dpi_awareness()
-    root.title("豆印 - 为图片加上豆包水印")
     root = Tk()
+    root.title("豆印 - 为图片加上豆包水印")
     try:
         ttk.Style().theme_use("aqua")
     except Exception:
