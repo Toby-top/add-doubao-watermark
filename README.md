@@ -26,9 +26,9 @@
    - `doubao-watermark` / `doubao-watermark.exe`：命令行工具
    - `doubao-watermark-gui.app` / `doubao-watermark-gui.exe`：图形界面工具
 
-### macOS 打不开怎么办？
+### macOS 打不开的解决方式
 
-如果提示“来自未识别开发者/无法打开”，按 macOS 版本通常有两种方式：
+若提示“来自未识别开发者/无法打开”，按 macOS 版本通常有两种方式：
 
 - **系统设置 → 隐私与安全性**：在提示处允许打开
 - 或在终端执行（对解压目录按需替换路径）：
@@ -145,6 +145,16 @@ doubao-watermark-gui
 
 ### 2) 我只想处理某几张图？
 用 GUI 的「选择图片…」；或 CLI 直接传单个文件路径（也可以多次执行）。
+
+---
+
+## To do.
+
+- 适配更多平台（macOS x86_64/Linux/Android...）
+
+- 设计一个有意思的应用图标
+
+> 有任何改进建议，欢迎 PR 或发起 issue 和 discussion。
 
 ---
 
