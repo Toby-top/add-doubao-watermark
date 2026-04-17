@@ -21,11 +21,13 @@ SUPPORTED_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff"}
 
 def _iter_images(input_path: Path) -> list[Path]:
     if input_path.is_file():
+        if input_path.name.startswith("._"):
+            return []
         return [input_path]
 
     paths: list[Path] = []
     for p in input_path.rglob("*"):
-        if p.is_file() and p.suffix.lower() in SUPPORTED_EXTS:
+        if p.is_file() and p.suffix.lower() in SUPPORTED_EXTS and not p.name.startswith("._"):
             paths.append(p)
     return sorted(paths)
 
