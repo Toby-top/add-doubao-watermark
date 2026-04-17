@@ -25,11 +25,11 @@ def _iter_images(inputs: list[Path]) -> list[Path]:
     paths: list[Path] = []
     for input_path in inputs:
         if input_path.is_file():
-            if input_path.suffix.lower() in SUPPORTED_EXTS:
+            if input_path.suffix.lower() in SUPPORTED_EXTS and not input_path.name.startswith("._"):
                 paths.append(input_path)
             continue
         for p in input_path.rglob("*"):
-            if p.is_file() and p.suffix.lower() in SUPPORTED_EXTS:
+            if p.is_file() and p.suffix.lower() in SUPPORTED_EXTS and not p.name.startswith("._"):
                 paths.append(p)
     return sorted(set(paths))
 
