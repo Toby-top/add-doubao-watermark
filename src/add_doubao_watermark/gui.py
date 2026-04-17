@@ -219,6 +219,8 @@ class App:
         t = threading.Thread(target=self._run_job, args=(job, watermark), daemon=True)
         t.start()
 
+        self.root.title("豆印")
+
     def _run_job(self, job: GuiJob, watermark: Image.Image) -> None:
         try:
             images = _iter_images(job.inputs)
@@ -257,8 +259,9 @@ class App:
             self.root.after(0, lambda: self.status.set(f"完成（{total}张）"))
             self.root.after(0, lambda: messagebox.showinfo("完成", f"处理完成：{total} 张"))
         except Exception as e:
+            error_msg = str(e)
             self.root.after(0, lambda: self.status.set("失败"))
-            self.root.after(0, lambda: messagebox.showerror("失败", str(e)))
+            self.root.after(0, lambda msg=error_msg: messagebox.showerror("失败", msg))
 
 
 def main() -> int:
