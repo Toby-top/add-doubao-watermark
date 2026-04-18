@@ -19,7 +19,7 @@
 
 ---
 
-## 下载安装（推荐：直接用打包好的程序）
+## 下载安装（推荐）
 
 1. 打开本仓库的 [Release](https://github.com/Toby-top/add-doubao-watermark/releases "") 页面，下载与你系统匹配的可执行文件(macOS ARM64/Windows x86_64)
 2. 解压后你会看到两个程序：
@@ -100,7 +100,7 @@ xattr -dr com.apple.quarantine ./doubao-watermark-gui.app
 
 ## 自定义/替换水印 PNG（可选）
 
-默认会使用程序内置的水印 PNG；如果你想替换成自己提取的“真实豆包水印 PNG”，有两种方式：
+默认使用程序内置的水印；若想要使用自己的 png 水印，有以下两种方式：
 
 1. **CLI 指定外部 PNG**（推荐）：
 
@@ -150,7 +150,7 @@ doubao-watermark-gui
 
 ## To do.
 
-- 适配更多平台（macOS x86_64/Linux/Android...）
+- 适配更多平台（~~macOS x86_64~~/Linux/Android...）
 
 - 设计一个有意思的应用图标
 
